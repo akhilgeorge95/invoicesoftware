@@ -1,0 +1,20 @@
+# No build step — nothing generated lives in this repo.
+
+# Dependencies (only used by local tooling, never by the site)
+node_modules/
+package-lock.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs & local env
+*.log
+.env
+.env.local

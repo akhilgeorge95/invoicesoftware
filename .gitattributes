@@ -1,0 +1,17 @@
+# Normalise to LF in the repository and on checkout — these files are served
+# as-is by a web host, so line endings should not vary by contributor OS.
+* text=auto eol=lf
+
+*.html  text eol=lf
+*.css   text eol=lf
+*.js    text eol=lf
+*.svg   text eol=lf
+*.xml   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.woff2 binary
