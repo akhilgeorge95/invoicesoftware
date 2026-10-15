@@ -42,14 +42,45 @@ since there are no fetches.
 
 ## Deploy
 
-Drop the folder on any static host — Cloudflare Pages, Netlify, Vercel, S3 + CloudFront,
-or plain nginx. There is nothing to build.
+Hosted on **Cloudflare Pages**, project `invoicesoftware`, in the Brocode Solutions
+account — the same arrangement as `rfidsolutions.ae`. The repository root is the publish
+directory; there is nothing to build.
 
-Before going live, set the real domain in:
+```bash
+npx wrangler pages deploy . --project-name invoicesoftware --branch main
+```
 
-- `<link rel="canonical">` and the `og:url` tags on all five pages
-- `robots.txt` (sitemap URL)
-- `sitemap.xml` (all `<loc>` values and `<lastmod>` dates)
+Hosts: `www.invoicesoftware.ae` (canonical), `invoicesoftware.ae`, and
+`invoicesoftware.pages.dev`.
+
+**Clean URLs are mandatory, not cosmetic.** Cloudflare Pages 308-redirects `/foo.html`
+to `/foo`. Every internal link, canonical, `og:url` and sitemap `<loc>` is therefore
+written extensionless (`/features`, not `/features.html`), while the files keep their
+`.html` names on disk — Pages maps `/features` to `features.html` itself. If you add a
+page or hand-edit a link, use the extensionless form, or that link takes a redirect hop
+and the page starts declaring a canonical that is not the URL serving it.
+
+Asset references are root-absolute (`/assets/...`) so they resolve identically from `/`
+and from `/features`.
+
+The canonical host appears in each page's `<link rel="canonical">` and `og:url`, in
+`robots.txt`, and in `sitemap.xml`. Changing hosts means changing all four.
+
+Repo metadata (`README.md`, `.gitignore`, `.gitattributes`) is uploaded and publicly
+served — `.assetsignore` does **not** work on a classic Pages project, only on Workers
+Assets. Don't put anything in this repo you would not publish.
+
+### Apex to www
+
+Both apex and `www` are attached to the Pages project, so both serve the site. They are
+consolidated onto `www` by the absolute canonical each page carries, not by a redirect.
+A `_redirects` file cannot do host-level redirects on Pages — a cross-hostname source
+line is silently inert. A real apex→www 301 needs a zone-level Redirect Rule:
+
+- In the `invoicesoftware.ae` zone: **Rules → Redirect Rules → Create rule**
+- If: `http.host eq "invoicesoftware.ae"`
+- Then: Dynamic redirect, `concat("https://www.invoicesoftware.ae", http.request.uri.path)`,
+  status 301, preserve query string
 
 ---
 
