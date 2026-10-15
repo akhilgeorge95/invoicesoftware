@@ -1,0 +1,5 @@
+# Files that live in the repo but should not be served by Cloudflare Pages.
+README.md
+.gitattributes
+.gitignore
+.assetsignore
