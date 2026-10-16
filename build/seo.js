@@ -26,7 +26,7 @@ const SITE = {
   // The ONE real address. No page may assert a postal address anywhere else —
   // build/verify-location.js fails the build if one appears.
   poBox: '51710',
-  street: '103/12, A2Z Business Center, Khaleefa Complex B, TCA',
+  street: 'Mezzanine Floor, Room No. 03, Building # 146, Wadi Al Kisayfah St., Al Zahiyah',
   city: 'Abu Dhabi',
   regionCode: 'AE-AZ',
   region: 'Abu Dhabi',

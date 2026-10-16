@@ -125,7 +125,7 @@ ${groups}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
       <p>
         <strong>One office, nationwide service.</strong> Brocode Solutions works from a single
-        office in Abu Dhabi — 103/12, A2Z Business Center, Khaleefa Complex B, TCA. The platform
+        office in Abu Dhabi — Building # 146, Wadi Al Kisayfah St., Al Zahiyah. The platform
         is cloud software used by businesses in every emirate; these pages describe the markets
         we serve, not branch offices.
       </p>

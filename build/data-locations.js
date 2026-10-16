@@ -79,9 +79,9 @@ const LOCATIONS = [
     ],
     areasHead: 'Serving businesses across the emirate',
     areas: ['Abu Dhabi city', 'Al Ain', 'Al Dhafra', 'Mussafah', 'Khalifa City', 'Madinat Zayed', 'Ruwais', 'Yas Island', 'Masdar City', 'KEZAD', 'ADGM / Al Maryah Island', 'twofour54'],
-    areasNote: 'Our office is at A2Z Business Center in the TCA district of Abu Dhabi city. The platform itself is cloud software, so wherever you are in the emirate you work in the same system — but Abu Dhabi is the one place you can actually come and sit with us.',
+    areasNote: 'Our office is on Wadi Al Kisayfah Street in Al Zahiyah, Abu Dhabi city. The platform itself is cloud software, so wherever you are in the emirate you work in the same system — but Abu Dhabi is the one place you can actually come and sit with us.',
     faqs: [
-      { q: 'Do you have an office in Abu Dhabi?', a: 'Yes. Abu Dhabi is our only office — 103/12, A2Z Business Center, Khaleefa Complex B, TCA, Abu Dhabi. You are welcome to visit, and support runs Sunday to Thursday, 9am to 6pm GST.' },
+      { q: 'Do you have an office in Abu Dhabi?', a: 'Yes. Abu Dhabi is our only office — Mezzanine Floor, Room No. 03, Building # 146, Wadi Al Kisayfah St., Al Zahiyah, Abu Dhabi. You are welcome to visit, and support runs Sunday to Thursday, 9am to 6pm GST.' },
       { q: 'Does it produce a valid UAE tax invoice?', a: 'Yes. Invoices carry your TRN, the client details, per-line VAT treatment and the fields a UAE tax invoice requires, in English or Arabic. 5% standard-rated VAT is applied automatically, and you can set zero-rated, exempt or out-of-scope per product or per line.' },
       { q: 'Does it work for ADGM and free-zone companies as well as mainland?', a: 'Yes. The licence route changes your client mix and some of your reporting, not the invoice format. You set your own TRN, currency and VAT defaults per company, and you can run up to ten companies from one login if you hold more than one licence.' },
       { q: 'Can I invoice government and semi-government clients?', a: 'Yes. You can carry a purchase-order or contract reference onto the invoice, break work into structured line items, and issue progress invoices against a project rather than one lump sum — which is usually what a government payment cycle expects.' },

@@ -34,7 +34,6 @@ const NAV = [
   { href: '/features',    label: 'Features' },
   { href: '/pricing',     label: 'Pricing' },
   { href: '/e-invoicing', label: 'e-Invoicing' },
-  { href: '/locations',   label: 'Locations' },
   { href: '/contact',     label: 'Contact' },
 ];
 
