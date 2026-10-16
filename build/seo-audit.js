@@ -23,7 +23,9 @@ function walk(dir, rel = '') {
     const full = path.join(dir, name);
     const r = rel ? `${rel}/${name}` : name;
     if (fs.statSync(full).isDirectory()) out.push(...walk(full, r));
-    else if (name.endsWith('.html')) out.push(r);
+    // 404.html is noindex by design, so it would fail the robots check and
+    // its title/description are not meant to be unique SERP entries.
+    else if (name.endsWith('.html') && r !== '404.html') out.push(r);
   }
   return out;
 }

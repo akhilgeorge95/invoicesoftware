@@ -22,8 +22,8 @@ const SEO = require('./seo');
 const ROOT = path.join(__dirname, '..');
 const SKIP = new Set(['build', 'assets', 'node_modules', '.git', '.wrangler', 'functions']);
 
-/* Pages that exist but must not be advertised. */
-const EXCLUDE = new Set([]);
+/* Pages that exist but must not be advertised: 404 is noindex by design. */
+const EXCLUDE = new Set(['404.html']);
 
 function walk(dir, rel = '') {
   const out = [];

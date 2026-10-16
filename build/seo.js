@@ -132,6 +132,8 @@ const PLACES = {
    at any folder depth. There is deliberately no assetPrefix parameter. */
 
 function head(o) {
+  // o.noindex — for utility pages such as 404 that must never be indexed but
+  // should still pass link equity onward.
   const canonical = abs(o.url);
   const desc = clamp(o.desc);
   const geo = o.geo || { regionCode: SITE.regionCode, city: SITE.city, lat: SITE.lat, lng: SITE.lng };
@@ -144,7 +146,7 @@ function head(o) {
 <title>${enc(o.title)}</title>
 <meta name="description" content="${enc(desc)}">
 ${o.keywords ? `<meta name="keywords" content="${enc(o.keywords)}">\n` : ''}<link rel="canonical" href="${canonical}">
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="robots" content="${o.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}">
 <meta name="author" content="${enc(SITE.legal)}">
 <meta name="publisher" content="${enc(SITE.legal)}">
 <!-- Geo targeting: ${enc(geo.city)}, United Arab Emirates -->
