@@ -12,20 +12,94 @@ Static HTML, CSS and vanilla JS. No build step, no dependencies, no framework.
 ## Files
 
 ```
-index.html          Home — hero, bento features, steps, dashboard, e-invoicing teaser,
-                    testimonials, full pricing, FAQ, CTA
-features.html       Deep feature pages by category + templates, apps, security
-pricing.html        Four plans, monthly/annual toggle, full comparison table, billing FAQ
-e-invoicing.html    UAE FTA mandate guide — five-corner model, timeline, readiness checklist
-contact.html        Demo request form, contact cards, quick answers
+index.html          Home
+features.html       Feature deep-dives + manual-vs-automated race
+pricing.html        Four AED plans, monthly/annual toggle, comparison table
+e-invoicing.html    UAE FTA mandate guide (PINT AE, Peppol, phase timeline)
+contact.html        Demo request form and contact details
+locations.html      GENERATED — crawlable index of every location page
+404.html            GENERATED — real 404, noindex
+<emirate>.html      GENERATED — one landing page per emirate
 
-assets/css/styles.css   Design system + all components (single file, sectioned)
-assets/js/main.js       Interaction & animation engine (single file, no dependencies)
-assets/img/favicon.svg  Gradient mark
+build/              The generator pipeline (NOT published — see Deploy)
+assets/css/styles.css   Design system + all components, single file
+assets/js/main.js       Interaction & animation engine, no dependencies
+assets/img/og.png       1200x630 social card (generated, committed)
 
-robots.txt          Allows all, points at the sitemap
-sitemap.xml         All five pages
+robots.txt          GENERATED
+sitemap.xml         GENERATED
 ```
+
+Hand-written pages are safe to edit **except** their `<head>` SEO block
+(delimited by `<!-- SEO:START -->` / `<!-- SEO:END -->`) and their nav and
+footer — those three regions are overwritten on the next build.
+
+## Build pipeline
+
+Plain CommonJS, no bundler, no dependencies, no `package.json`. Rendered HTML is
+committed. **Run in this order** — later scripts operate on what earlier ones emit:
+
+```bash
+node build/gen-location.js       # one page per entry in data-locations.js
+node build/gen-locations-page.js # locations.html, the crawlable index
+node build/gen-404.js            # 404.html
+node build/sync-chrome.js        # re-syncs nav + footer into the core pages
+node build/seo-core.js           # injects the SEO head block into the core pages
+node build/sitemap.js            # sitemap.xml + robots.txt
+node build/clean-urls.js         # MUST BE LAST
+```
+
+Then the two read-only gates, both of which exit non-zero on failure:
+
+```bash
+node build/verify-location.js    # per-page: links, schema, FAQ depth, address honesty
+node build/seo-audit.js          # site-wide: 18 checks, duplicates, h1 count, JSON-LD
+```
+
+The pipeline is **idempotent** — running it twice changes nothing — so any diff
+after a rebuild is a real change rather than noise.
+
+`build/seo.js` is the single source of truth for company facts (`SITE`), geo
+targets (`PLACES`), the whole `<head>` block (`head()`) and every schema.org
+node. Change `SITE.origin` and rebuild to re-point every canonical, `og:url`,
+hreflang, schema `@id` and sitemap `<loc>` at a new host.
+
+`build/gen-og-image.py` regenerates the social card. It needs Pillow and is not
+part of the Node pipeline; run it by hand when the card design changes.
+
+### Adding a location
+
+Add an entry to `build/data-locations.js` and a matching `PLACES` entry in
+`build/seo.js`, then rebuild. `parentSlug` is the only structural field:
+
+- absent → emirate hub, rendered to `<slug>.html`, served at `/<slug>`
+- present → city page, rendered to `<parent>/<slug>.html`, served at `/<parent>/<slug>`
+
+Both URL shapes were verified against a real Pages deployment: `/dubai` serves
+`dubai.html` with no redirect, `/dubai/` 308s to `/dubai`, and
+`/dubai/business-bay` serves `dubai/business-bay.html`.
+
+**Write the copy by hand.** A set of near-identical "invoice software in
+\<city\>" pages reads as doorway pages and gets demoted — the whole point of the
+per-entry title, description, intro, cards, districts and FAQs is that they are
+genuinely different. `seo-audit.js` makes a duplicate title, description or
+canonical a hard error for exactly this reason.
+
+### Two rules the verifier enforces
+
+**One office, in Abu Dhabi.** A location page expresses its city as schema
+`areaServed`, never as a postal address — only the `Organization` node carries
+an address, and everything else references it by `@id`.
+`verify-location.js` fails the build two ways: structurally, if the
+Organization locality is not Abu Dhabi, and by raw-text scan, if any
+`addressLocality` names the target city. The first FAQ on every non-Abu-Dhabi
+page must also answer whether there is a local office.
+
+**Verified names only.** Free-zone names come from the UAE Ministry of Economy
+and Tourism's own registrar list. Names that were checked and refuted go in the
+entry's `bannedNames`, and the build fails if one appears in the rendered page —
+which is what stops a fact true of one emirate leaking into another. Fujairah's
+licensing authority is deliberately not named anywhere: sources conflict.
 
 ## Run locally
 
@@ -42,33 +116,34 @@ since there are no fetches.
 
 ## Deploy
 
-Hosted on **Cloudflare Pages**, project `invoicesoftware`, in the Brocode Solutions
-account — the same arrangement as `rfidsolutions.ae`. The repository root is the publish
-directory; there is nothing to build.
+Hosted on **Cloudflare Pages**, project `invoicesoftware`, in the Brocode
+Solutions account — the same arrangement as `rfidsolutions.ae`.
 
 ```bash
-npx wrangler pages deploy . --project-name invoicesoftware --branch main
+node build/deploy.js                 # stages public files only, then deploys
+node build/deploy.js --branch test   # preview deployment
 ```
+
+**Do not run `wrangler pages deploy .` directly.** The repo root is the publish
+directory, so that uploads `build/` too — verified: `/build/seo.js` was live and
+returning real JavaScript. `deploy.js` stages only the public files (20, not 29)
+and excludes `build/`, `README.md` and the dotfiles.
 
 Hosts: `www.invoicesoftware.ae` (canonical), `invoicesoftware.ae`, and
 `invoicesoftware.pages.dev`.
 
-**Clean URLs are mandatory, not cosmetic.** Cloudflare Pages 308-redirects `/foo.html`
-to `/foo`. Every internal link, canonical, `og:url` and sitemap `<loc>` is therefore
-written extensionless (`/features`, not `/features.html`), while the files keep their
-`.html` names on disk — Pages maps `/features` to `features.html` itself. If you add a
-page or hand-edit a link, use the extensionless form, or that link takes a redirect hop
-and the page starts declaring a canonical that is not the URL serving it.
+**Clean URLs are mandatory, not cosmetic.** Cloudflare Pages 308-redirects
+`/foo.html` to `/foo`. Every internal link, canonical, `og:url` and sitemap
+`<loc>` is therefore extensionless, while files keep their `.html` names on disk.
+`clean-urls.js` enforces this and must run last.
 
-Asset references are root-absolute (`/assets/...`) so they resolve identically from `/`
-and from `/features`.
+**404.html must exist.** Without it Pages answers every unmatched path with the
+homepage and an HTTP 200 — a soft 404 that invites Google to index unlimited
+junk URLs as duplicates. Verified before the fix: `/no-such-page`,
+`/dubai/fake-city` and `/abc/def/ghi` all returned 200 with the homepage.
 
-The canonical host appears in each page's `<link rel="canonical">` and `og:url`, in
-`robots.txt`, and in `sitemap.xml`. Changing hosts means changing all four.
-
-Repo metadata (`README.md`, `.gitignore`, `.gitattributes`) is uploaded and publicly
-served — `.assetsignore` does **not** work on a classic Pages project, only on Workers
-Assets. Don't put anything in this repo you would not publish.
+Asset references are root-absolute (`/assets/...`) so they resolve identically
+from `/`, `/dubai` and `/dubai/business-bay`.
 
 ### Apex to www
 
@@ -91,11 +166,10 @@ These are deliberate placeholders, not oversights:
 | What | Where | Notes |
 |---|---|---|
 | **Testimonials** | `index.html`, "What people say" | Attributed to "Sample Customer". Swap in real, attributable quotes — the section is marked with an HTML comment. |
-| **Office address** | `contact.html` | "Business Bay, Dubai" is a stand-in. Email and phone are real (`hello@brocodesolutions.com`, `+971 50 761 2213`). |
+| **~~Office address~~** | — | Done: contact page and LocalBusiness schema now carry the real Abu Dhabi office. |
 | **Support hours** | `contact.html`, next to the phone | "Sun–Thu, 9am–6pm GST", "Under 4 hours", "English & Arabic" were assumed — confirm or change. |
 | **Form handler** | `contact.html` | The form is wired to a local success simulation in `initForm()`. Point it at Netlify Forms, a Cloudflare Pages Function, Formspree or your CRM. |
 | **Pricing** | `pricing.html`, `index.html` | AED 0 / 49 / 69 / 1,099 derived from Invoice Ninja's USD tiers. Confirm against your actual commercials. |
-| **`og:image`** | all pages | `assets/img/og.png` is referenced but not included — add a 1200×630 social card. |
 | **Sign-in / signup links** | nav and CTAs | Currently point at `contact.html`. Repoint at the real app once it exists. |
 | **Brocode Solutions URL** | footer bottom bar, all pages | The credit links to `https://brocodesolutions.com`, inferred from the account email domain. Correct it if the site lives elsewhere. |
 | **Feature claims** | throughout | Written as product copy for a platform that behaves like Invoice Ninja. Verify each claim matches what you actually ship. |
