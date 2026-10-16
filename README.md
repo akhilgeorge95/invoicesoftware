@@ -166,7 +166,8 @@ These are deliberate placeholders, not oversights:
 | What | Where | Notes |
 |---|---|---|
 | **Testimonials** | `index.html`, "What people say" | Attributed to "Sample Customer". Swap in real, attributable quotes — the section is marked with an HTML comment. |
-| **~~Office address~~** | — | Done: contact page and LocalBusiness schema now carry the real Abu Dhabi office. |
+| **~~Office address~~** | — | Done: Mezzanine Floor, Room No. 03, Building # 146, Wadi Al Kisayfah St., Al Zahiyah, Abu Dhabi — in `SITE.street`, so it propagates everywhere on rebuild. |
+| **PO Box 51710** | `build/seo.js` `SITE.poBox` | **Unconfirmed.** Carried over from the previous address and not re-supplied with the new one. Confirm it still applies, or delete the `poBox` line — it appears in the LocalBusiness schema on every page. |
 | **Support hours** | `contact.html`, next to the phone | "Sun–Thu, 9am–6pm GST", "Under 4 hours", "English & Arabic" were assumed — confirm or change. |
 | **Form handler** | `contact.html` | The form is wired to a local success simulation in `initForm()`. Point it at Netlify Forms, a Cloudflare Pages Function, Formspree or your CRM. |
 | **Pricing** | `pricing.html`, `index.html` | AED 0 / 49 / 69 / 1,099 derived from Invoice Ninja's USD tiers. Confirm against your actual commercials. |
