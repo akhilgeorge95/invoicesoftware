@@ -1,4 +1,6 @@
+# robots.txt - InvoiceSoftware.ae (https://www.invoicesoftware.ae)
 User-agent: *
 Allow: /
+Disallow: /build/
 
 Sitemap: https://www.invoicesoftware.ae/sitemap.xml

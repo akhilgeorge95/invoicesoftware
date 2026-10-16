@@ -1,33 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.invoicesoftware.ae/</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/"/>
   </url>
   <url>
     <loc>https://www.invoicesoftware.ae/features</loc>
-    <lastmod>2026-09-09</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/features"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/features"/>
   </url>
   <url>
     <loc>https://www.invoicesoftware.ae/pricing</loc>
-    <lastmod>2026-09-09</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/pricing"/>
   </url>
   <url>
     <loc>https://www.invoicesoftware.ae/e-invoicing</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/e-invoicing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/e-invoicing"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/locations</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/locations"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/locations"/>
   </url>
   <url>
     <loc>https://www.invoicesoftware.ae/contact</loc>
-    <lastmod>2026-09-09</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/contact"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/abu-dhabi</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/abu-dhabi"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/abu-dhabi"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/ajman</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/ajman"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/ajman"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/dubai</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/dubai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/dubai"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/fujairah</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/fujairah"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/fujairah"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/ras-al-khaimah</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/ras-al-khaimah"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/ras-al-khaimah"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/sharjah</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/sharjah"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/sharjah"/>
+  </url>
+  <url>
+    <loc>https://www.invoicesoftware.ae/umm-al-quwain</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ae" href="https://www.invoicesoftware.ae/umm-al-quwain"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.invoicesoftware.ae/umm-al-quwain"/>
   </url>
 </urlset>

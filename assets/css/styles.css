@@ -2306,6 +2306,108 @@ td .no { color: var(--text-faint); }
   96%, 100% { opacity: 0; transform: translateY(7px); }
 }
 
+/* --- Location landing pages --------------------------------------------- */
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+.breadcrumb a {
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: color .3s var(--ease-out);
+}
+.breadcrumb a:hover { color: var(--text); }
+.breadcrumb i { font-style: normal; opacity: .45; }
+.breadcrumb span[aria-current] { color: var(--text); font-weight: 650; }
+
+/* Chips listing the districts a page covers. */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  justify-content: center;
+}
+.chip-row .tag {
+  text-transform: none;
+  letter-spacing: -.005em;
+  font-size: .82rem;
+  font-weight: 600;
+  padding: 8px 15px;
+}
+
+/* A whole card that is a link — the hover lift lives on the anchor. */
+.loc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.loc-card .link-arrow { margin-top: auto; padding-top: 6px; }
+
+.loc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+.loc-tile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: .92rem;
+  font-weight: 650;
+  letter-spacing: -.015em;
+  transition: transform .4s var(--ease-out), border-color .35s, box-shadow .4s var(--ease-out);
+}
+.loc-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(109, 94, 252, .42);
+  box-shadow: var(--glow);
+}
+.loc-tile__pin {
+  width: 32px; height: 32px;
+  flex: none;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--grad-soft);
+  color: var(--brand-1);
+  transition: background .35s, color .35s;
+}
+:root[data-theme="dark"] .loc-tile__pin { color: #b0a7ff; }
+.loc-tile:hover .loc-tile__pin { background: var(--grad-brand); color: #fff; }
+.loc-tile__pin svg { width: 16px; height: 16px; }
+
+/* locations.html — emirate groups, each with its city tiles */
+.loc-group { display: grid; gap: 16px; }
+.loc-group + .loc-group { margin-top: clamp(32px, 4vw, 52px); }
+.loc-group__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.loc-group__head h2 { font-size: clamp(1.25rem, 2vw, 1.5rem); letter-spacing: -.03em; }
+.loc-group__head .count {
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
 /* Callout box */
 .note-box {
   display: flex;

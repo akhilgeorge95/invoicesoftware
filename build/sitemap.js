@@ -1,0 +1,134 @@
+/* build/sitemap.js — generates sitemap.xml and robots.txt from the files that
+   actually exist on disk.
+
+   Two deliberate choices:
+
+   1. <lastmod> comes from git, not the build clock. Stamping every URL with
+      today's date on every build tells Google nothing about what changed, so
+      it learns to ignore the field. A file that differs from HEAD gets today;
+      everything else gets the date of the commit that last touched it.
+
+   2. hreflang is READ BACK from each page rather than assumed. Announcing
+      en-ae for a page whose own tag says something else is a contradiction,
+      and Google discards annotations it cannot reconcile. */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { execFileSync } = require('child_process');
+const SEO = require('./seo');
+
+const ROOT = path.join(__dirname, '..');
+const SKIP = new Set(['build', 'assets', 'node_modules', '.git', '.wrangler', 'functions']);
+
+/* Pages that exist but must not be advertised. */
+const EXCLUDE = new Set([]);
+
+function walk(dir, rel = '') {
+  const out = [];
+  for (const name of fs.readdirSync(dir)) {
+    if (name.startsWith('.') || SKIP.has(name)) continue;
+    const full = path.join(dir, name);
+    const r = rel ? `${rel}/${name}` : name;
+    if (fs.statSync(full).isDirectory()) out.push(...walk(full, r));
+    else if (name.endsWith('.html') && !EXCLUDE.has(r)) out.push(r);
+  }
+  return out;
+}
+
+/* ---- git-derived lastmod ------------------------------------------------ */
+function lastmodIndex() {
+  const today = new Date().toISOString().slice(0, 10);
+  const dirty = new Set();
+  const map = new Map();
+
+  try {
+    const status = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'],
+      { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    for (const line of status.split('\n')) {
+      const p = line.slice(3).trim().replace(/^"|"$/g, '');
+      if (p) dirty.add(p);
+    }
+
+    const log = execFileSync('git', ['log', '--pretty=format:%cI', '--name-only', '--no-renames'],
+      { cwd: ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+    let when = null;
+    for (const line of log.split('\n')) {
+      if (/^\d{4}-\d{2}-\d{2}T/.test(line)) { when = line.slice(0, 10); continue; }
+      if (when && line && !map.has(line)) map.set(line, when);   // log is newest-first
+    }
+  } catch (e) {
+    console.log('  (not a git checkout — falling back to file mtimes)');
+  }
+
+  return {
+    get(f) {
+      if (dirty.has(f)) return today;
+      if (map.has(f)) return map.get(f);
+      try { return fs.statSync(path.join(ROOT, f)).mtime.toISOString().slice(0, 10); }
+      catch (e) { return today; }
+    },
+  };
+}
+
+/* ---- rank / priority --------------------------------------------------- */
+const CORE = ['index.html', 'features.html', 'pricing.html', 'e-invoicing.html', 'locations.html', 'contact.html'];
+
+function rank(f) {
+  const i = CORE.indexOf(f);
+  if (i !== -1) return i;
+  return f.includes('/') ? 100 : 50;   // emirate hubs before city pages
+}
+
+function meta(f) {
+  if (f === 'index.html') return { p: '1.0', c: 'weekly' };
+  if (f === 'features.html' || f === 'pricing.html') return { p: '0.9', c: 'weekly' };
+  if (f === 'e-invoicing.html') return { p: '0.9', c: 'monthly' };
+  if (f === 'locations.html') return { p: '0.8', c: 'weekly' };
+  if (f === 'contact.html') return { p: '0.7', c: 'monthly' };
+  if (!f.includes('/')) return { p: '0.8', c: 'monthly' };   // emirate hub
+  return { p: '0.7', c: 'monthly' };                          // city page
+}
+
+/* Clean URL for a file, matching exactly what Cloudflare Pages serves. */
+const urlFor = f => (f === 'index.html' ? SEO.SITE.origin + '/' : SEO.abs(f.replace(/\.html$/, '')));
+
+/* ---- build ------------------------------------------------------------- */
+const files = walk(ROOT).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+const lm = lastmodIndex();
+
+const body = files.map(f => {
+  const html = fs.readFileSync(path.join(ROOT, f), 'utf8');
+  const hl = (html.match(/<link rel="alternate" hreflang="(en-[a-z]{2})"/i) || [, 'en-ae'])[1];
+  const loc = urlFor(f);
+  const { p, c } = meta(f);
+  return `  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lm.get(f)}</lastmod>
+    <changefreq>${c}</changefreq>
+    <priority>${p}</priority>
+    <xhtml:link rel="alternate" hreflang="${hl}" href="${loc}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${loc}"/>
+  </url>`;
+}).join('\n');
+
+fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${body}
+</urlset>
+`, 'utf8');
+
+/* Pure ASCII — safest across crawler parsers. */
+fs.writeFileSync(path.join(ROOT, 'robots.txt'),
+  `# robots.txt - InvoiceSoftware.ae (${SEO.SITE.origin})
+User-agent: *
+Allow: /
+Disallow: /build/
+
+Sitemap: ${SEO.SITE.origin}/sitemap.xml
+`, 'utf8');
+
+console.log(`sitemap: ${files.length} URL(s) -> sitemap.xml, robots.txt`);
