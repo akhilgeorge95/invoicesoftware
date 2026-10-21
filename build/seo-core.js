@@ -16,8 +16,10 @@
 const fs = require('fs');
 const path = require('path');
 const SEO = require('./seo');
+const GITDATE = require('./gitdate');
 
 const ROOT = path.join(__dirname, '..');
+const DATES = GITDATE.index();
 
 /* Strip tags and collapse entities for use inside a JSON-LD string. */
 function text(html) {
@@ -56,7 +58,7 @@ const PAGES = [
     title: 'Invoice Software UAE | VAT Invoicing, Payments & Expenses',
     desc: 'Send VAT-compliant invoices, take online payments, and track expenses, time and projects — one platform built for UAE businesses and ready for FTA e-invoicing.',
     keywords: 'invoice software UAE, invoicing software UAE, VAT invoice software, billing software UAE, e-invoicing UAE, FTA e-invoicing, accounting software UAE, free invoice software',
-    schemas: h => [SEO.organizationSchema(), SEO.webSiteSchema(), SEO.softwareAppSchema(), SEO.faqSchema(faqsFrom(h))],
+    schemas: (h, page) => [SEO.organizationSchema(), SEO.webSiteSchema(), page(), SEO.softwareAppSchema(), SEO.faqSchema(faqsFrom(h))],
   },
   {
     file: 'features.html',
@@ -64,7 +66,7 @@ const PAGES = [
     title: 'Features | Invoicing, Payments, Expenses & Projects',
     desc: 'Invoicing and quotes, online payments, recurring billing, time tracking, projects, expenses, banking, a branded client portal, automations and a full REST API — built for UAE businesses.',
     keywords: 'invoice software features, invoicing features UAE, recurring invoices, time tracking invoicing, expense tracking UAE, client portal invoicing, invoice templates UAE, invoicing API',
-    schemas: h => [SEO.organizationSchema(), crumb(['Features', 'features'])],
+    schemas: (h, page) => [SEO.organizationSchema(), crumb(['Features', 'features']), page()],
   },
   {
     file: 'pricing.html',
@@ -72,7 +74,7 @@ const PAGES = [
     title: 'Pricing in AED | Free Plan, Pro from AED 49/month',
     desc: 'Free forever for up to 5 clients. Pro from AED 49/month, Enterprise from AED 69/month, Premium from AED 1,099/year. 30-day money-back promise, no cut of what you invoice.',
     keywords: 'invoice software pricing UAE, invoicing software cost AED, free invoice software UAE, billing software price Dubai, invoice software plans',
-    schemas: h => [SEO.organizationSchema(), crumb(['Pricing', 'pricing']), SEO.softwareAppSchema(), SEO.faqSchema(faqsFrom(h))],
+    schemas: (h, page) => [SEO.organizationSchema(), crumb(['Pricing', 'pricing']), page(), SEO.softwareAppSchema(), SEO.faqSchema(faqsFrom(h))],
   },
   {
     file: 'e-invoicing.html',
@@ -81,7 +83,22 @@ const PAGES = [
     desc: 'A plain-English guide to the UAE e-invoicing mandate: the Peppol five-corner model, the PINT AE format, Accredited Service Providers, and the FTA timeline through 2026 and 2027.',
     keywords: 'UAE e-invoicing, PINT AE, FTA e-invoicing mandate, Peppol UAE, Accredited Service Provider UAE, e-invoicing timeline UAE, UAE VAT e-invoice',
     type: 'article',
-    schemas: h => [SEO.organizationSchema(), crumb(['e-Invoicing', 'e-invoicing']), SEO.faqSchema(faqsFrom(h))],
+    // The guide is the one genuinely editorial page: Article carries the author
+    // and the dates an answer engine checks before trusting a dated claim.
+    schemas: (h, page, meta) => [
+      SEO.organizationSchema(),
+      crumb(['e-Invoicing', 'e-invoicing']),
+      page(),
+      SEO.articleSchema({
+        url: 'e-invoicing',
+        headline: 'UAE e-Invoicing and PINT AE: the FTA mandate explained',
+        desc: meta.desc,
+        published: '2026-09-09',
+        modified: meta.modified,
+        section: 'Tax compliance',
+      }),
+      SEO.faqSchema(faqsFrom(h)),
+    ],
   },
   {
     file: 'contact.html',
@@ -89,9 +106,10 @@ const PAGES = [
     title: 'Contact & Demo | Invoice Software UAE, Abu Dhabi',
     desc: 'Book a demo, ask about FTA e-invoicing readiness, or get help migrating your data. Our office is in Abu Dhabi and support runs Sunday to Thursday on UAE hours.',
     keywords: 'contact invoice software UAE, invoicing software demo UAE, e-invoicing consultation UAE, invoice software support Abu Dhabi',
-    schemas: h => [
+    schemas: (h, page) => [
       SEO.organizationSchema(),
       crumb(['Contact', 'contact']),
+      page(),
       { '@type': 'ContactPage', name: 'Contact InvoiceSoftware.ae', url: SEO.abs('contact'), about: { '@id': SEO.ORG_ID } },
       SEO.faqSchema(faqsFrom(h)),
     ],
@@ -116,13 +134,18 @@ for (const p of PAGES) {
   let html = fs.readFileSync(abs, 'utf8');
   const original = html;
 
+  const modified = DATES.get(p.file);
+  const mkPage = () => SEO.webPageSchema({
+    url: p.url, title: p.title, desc: p.desc, modified,
+  });
+
   const block = SEO.head({
     url: p.url,
     title: p.title,
     desc: p.desc,
     keywords: p.keywords,
     type: p.type || 'website',
-    schemas: p.schemas(html).filter(Boolean),
+    schemas: p.schemas(html, mkPage, { desc: p.desc, modified }).filter(Boolean),
   });
 
   if (html.includes('<!-- SEO:START -->')) {
@@ -145,9 +168,9 @@ for (const p of PAGES) {
 
   if (html !== original) { fs.writeFileSync(abs, html, 'utf8'); changed++; }
 
-  const n = (p.schemas(original).filter(Boolean)).length;
+  const n = (p.schemas(original, mkPage, { desc: p.desc, modified }).filter(Boolean)).length;
   const faqs = faqsFrom(original).length;
-  console.log(`  ${p.file.padEnd(20)} ${n} schema node(s)${faqs ? `, ${faqs} FAQ Q&A parsed from the page` : ''}`);
+  console.log(`  ${p.file.padEnd(20)} ${n} schema node(s), modified ${modified}${faqs ? `, ${faqs} FAQ Q&A parsed` : ''}`);
 }
 
 console.log(`seo-core: updated ${changed} of ${PAGES.length} core page(s)`);

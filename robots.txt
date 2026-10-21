@@ -1,6 +1,12 @@
 # robots.txt - InvoiceSoftware.ae (https://www.invoicesoftware.ae)
+
 User-agent: *
 Allow: /
 Disallow: /build/
+
+# Gemini training and grounding. Permitted deliberately.
+# Does not affect Google Search inclusion, ranking, or AI Overviews.
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://www.invoicesoftware.ae/sitemap.xml

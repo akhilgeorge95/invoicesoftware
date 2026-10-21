@@ -15,10 +15,15 @@
 const fs = require('fs');
 const path = require('path');
 const SEO = require('./seo');
+const GITDATE = require('./gitdate');
 const CHROME = require('./chrome');
 const LOCATIONS = require('./data-locations');
 
 const ROOT = path.join(__dirname, '..');
+const DATES = GITDATE.index();
+/* Content lives in the data file; the generator shapes it. Either changing is
+   a real change to every page it produces. */
+const PAGE_MODIFIED = DATES.latest('build/data-locations.js', 'build/gen-location.js');
 const esc = SEO.enc;
 
 /* ---------------------------------------------------------------- indexes -- */
@@ -88,6 +93,9 @@ function page(d) {
     schemas: [
       SEO.organizationSchema(),
       SEO.breadcrumbSchema(trail),
+      SEO.webPageSchema({
+        url, title: d.title, desc: d.description, modified: PAGE_MODIFIED,
+      }),
       SEO.serviceAreaSchema({
         city: d.city,
         url,
@@ -188,6 +196,10 @@ ${CHROME.header('/locations')}
     <nav class="breadcrumb" aria-label="Breadcrumb">${crumbs}</nav>
     <h1 class="h1" data-split>${esc(d.h1)}</h1>
     <p class="lead">${esc(d.sub)}</p>
+    <div class="answer-box">
+      <span class="answer-box__label">In short</span>
+      <p>${esc(d.answer)}</p>
+    </div>
     <div class="hero__cta" style="justify-content:center">
       <a class="btn btn--primary btn--lg" href="/contact" data-magnetic>
         Create a free account ${ARROW}

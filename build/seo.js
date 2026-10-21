@@ -201,6 +201,13 @@ function organizationSchema() {
       addressCountry: SITE.country,
     },
     geo: { '@type': 'GeoCoordinates', latitude: SITE.lat, longitude: SITE.lng },
+    // Only URLs that genuinely belong to this organisation. An unverifiable
+    // sameAs is worse than none: it muddles the entity rather than pinning it.
+    sameAs: ['https://brocodesolutions.com'],
+    knowsAbout: [
+      'Invoicing software', 'UAE VAT compliance', 'FTA e-invoicing',
+      'PINT AE', 'Peppol', 'Accounts receivable', 'Expense management',
+    ],
     areaServed: [
       { '@type': 'Country', name: SITE.countryName },
       { '@type': 'City', name: SITE.city },
@@ -287,6 +294,46 @@ function softwareAppSchema() {
   };
 }
 
+/* A WebPage node tying the page to the site and the organisation, carrying a
+   real dateModified. `about` pins what the page is about to the org entity. */
+function webPageSchema({ url, title, desc, modified, published }) {
+  const n = {
+    '@type': 'WebPage',
+    '@id': abs(url) + '#webpage',
+    url: abs(url),
+    name: title,
+    description: clamp(desc),
+    isPartOf: { '@id': `${SITE.origin}/#website` },
+    about: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    inLanguage: 'en-AE',
+  };
+  if (published) n.datePublished = published;
+  if (modified) n.dateModified = modified;
+  return n;
+}
+
+/* For genuinely editorial pages — the e-invoicing guide. Article carries the
+   author and dates that an answer engine looks for when deciding whether a
+   claim is current and attributable. */
+function articleSchema({ url, headline, desc, modified, published, section }) {
+  return {
+    '@type': 'Article',
+    '@id': abs(url) + '#article',
+    headline,
+    description: clamp(desc, 300),
+    url: abs(url),
+    mainEntityOfPage: { '@id': abs(url) + '#webpage' },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    inLanguage: 'en-AE',
+    isAccessibleForFree: true,
+    ...(section ? { articleSection: section } : {}),
+    ...(published ? { datePublished: published } : {}),
+    ...(modified ? { dateModified: modified } : {}),
+  };
+}
+
 function webSiteSchema() {
   return {
     '@type': 'WebSite',
@@ -302,5 +349,5 @@ module.exports = {
   SITE, PLACES, ORG_ID,
   abs, enc, clamp, head,
   organizationSchema, serviceAreaSchema, faqSchema, breadcrumbSchema,
-  softwareAppSchema, webSiteSchema,
+  softwareAppSchema, webSiteSchema, webPageSchema, articleSchema,
 };

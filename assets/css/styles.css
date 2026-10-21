@@ -2306,6 +2306,75 @@ td .no { color: var(--text-faint); }
   96%, 100% { opacity: 0; transform: translateY(7px); }
 }
 
+/* Answer-first summary. A short, self-contained statement placed above the
+   fold: featured snippets and AI answer surfaces extract a standalone answer
+   far more reliably than they infer one from flowing prose. */
+.answer-box {
+  position: relative;
+  max-width: 68ch;
+  margin: 6px auto 0;
+  padding: 20px 24px 20px 26px;
+  text-align: left;
+  border-radius: var(--radius);
+  border: 1px solid rgba(109, 94, 252, .28);
+  background: var(--grad-soft);
+}
+.answer-box::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--grad-brand);
+}
+.answer-box__label {
+  display: block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brand-1);
+  margin-bottom: 7px;
+}
+:root[data-theme="dark"] .answer-box__label { color: var(--brand-3); }
+.answer-box p {
+  font-size: .97rem;
+  line-height: 1.68;
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+
+/* Compact fact table — tables extract cleanly into answer surfaces. */
+.fact-table { width: 100%; min-width: 0; border-collapse: collapse; }
+.fact-table caption {
+  caption-side: top;
+  text-align: left;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-bottom: 12px;
+}
+.fact-table th, .fact-table td {
+  padding: 13px 16px;
+  font-size: .9rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.fact-table thead th {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--text-faint);
+  font-weight: 800;
+  background: var(--surface-2);
+}
+.fact-table tbody th { font-weight: 700; white-space: nowrap; color: var(--text); }
+.fact-table tbody tr:last-child th,
+.fact-table tbody tr:last-child td { border-bottom: 0; }
+
 /* --- Location landing pages --------------------------------------------- */
 
 .breadcrumb {

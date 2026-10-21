@@ -16,8 +16,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
 const SEO = require('./seo');
+const GITDATE = require('./gitdate');
 
 const ROOT = path.join(__dirname, '..');
 const SKIP = new Set(['build', 'assets', 'node_modules', '.git', '.wrangler', 'functions']);
@@ -35,41 +35,6 @@ function walk(dir, rel = '') {
     else if (name.endsWith('.html') && !EXCLUDE.has(r)) out.push(r);
   }
   return out;
-}
-
-/* ---- git-derived lastmod ------------------------------------------------ */
-function lastmodIndex() {
-  const today = new Date().toISOString().slice(0, 10);
-  const dirty = new Set();
-  const map = new Map();
-
-  try {
-    const status = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'],
-      { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
-    for (const line of status.split('\n')) {
-      const p = line.slice(3).trim().replace(/^"|"$/g, '');
-      if (p) dirty.add(p);
-    }
-
-    const log = execFileSync('git', ['log', '--pretty=format:%cI', '--name-only', '--no-renames'],
-      { cwd: ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-    let when = null;
-    for (const line of log.split('\n')) {
-      if (/^\d{4}-\d{2}-\d{2}T/.test(line)) { when = line.slice(0, 10); continue; }
-      if (when && line && !map.has(line)) map.set(line, when);   // log is newest-first
-    }
-  } catch (e) {
-    console.log('  (not a git checkout — falling back to file mtimes)');
-  }
-
-  return {
-    get(f) {
-      if (dirty.has(f)) return today;
-      if (map.has(f)) return map.get(f);
-      try { return fs.statSync(path.join(ROOT, f)).mtime.toISOString().slice(0, 10); }
-      catch (e) { return today; }
-    },
-  };
 }
 
 /* ---- rank / priority --------------------------------------------------- */
@@ -96,7 +61,7 @@ const urlFor = f => (f === 'index.html' ? SEO.SITE.origin + '/' : SEO.abs(f.repl
 
 /* ---- build ------------------------------------------------------------- */
 const files = walk(ROOT).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
-const lm = lastmodIndex();
+const lm = GITDATE.index();
 
 const body = files.map(f => {
   const html = fs.readFileSync(path.join(ROOT, f), 'utf8');
@@ -121,12 +86,27 @@ ${body}
 </urlset>
 `, 'utf8');
 
-/* Pure ASCII — safest across crawler parsers. */
+/* Pure ASCII — safest across crawler parsers.
+
+   Google-Extended is listed explicitly for documentation, not because it
+   changes anything today: `User-agent: *` already permits it. Per Google's own
+   crawler docs it governs whether content may be used for Gemini model
+   training and grounding, and it "does not impact a site's inclusion in Google
+   Search nor is it used as a ranking signal". It does NOT control AI Overviews
+   — those run off Googlebot like the rest of Search. Stated here so a future
+   edit does not block Gemini grounding by accident while aiming at something
+   else. */
 fs.writeFileSync(path.join(ROOT, 'robots.txt'),
   `# robots.txt - InvoiceSoftware.ae (${SEO.SITE.origin})
+
 User-agent: *
 Allow: /
 Disallow: /build/
+
+# Gemini training and grounding. Permitted deliberately.
+# Does not affect Google Search inclusion, ranking, or AI Overviews.
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: ${SEO.SITE.origin}/sitemap.xml
 `, 'utf8');

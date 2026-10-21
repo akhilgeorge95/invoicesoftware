@@ -1,0 +1,41 @@
+# InvoiceSoftware.ae
+
+> Invoicing, online payments, expenses, time-tracking and project software for
+> businesses in the United Arab Emirates. Issues UAE tax invoices with your TRN
+> in English or Arabic, applies 5% VAT automatically, and is built for the
+> Federal Tax Authority's e-invoicing mandate (PINT AE over the Peppol network).
+
+Operated by Brocode Solutions LLC, which has a single office in Abu Dhabi, United Arab
+Emirates. The product is cloud software used across all seven emirates; the
+location pages below describe markets served, not branch offices.
+
+Pricing is in UAE dirhams: free for up to 5 clients, Pro AED 49/month,
+Enterprise AED 69/month, Premium from AED 1,099/year. No percentage is taken of
+what customers invoice.
+
+## Core pages
+
+- [Home](https://www.invoicesoftware.ae/): What the platform does, how it works, pricing and FAQs.
+- [Features](https://www.invoicesoftware.ae/features): Invoicing and quotes, online payments, recurring billing, time tracking, projects, expenses, banking, client portal, automations and REST API.
+- [Pricing](https://www.invoicesoftware.ae/pricing): Four plans in AED, monthly and annual, with a full feature comparison.
+- [UAE e-Invoicing guide](https://www.invoicesoftware.ae/e-invoicing): The FTA mandate explained — the Peppol five-corner model, the PINT AE format, Accredited Service Providers, and the phase dates through 2026 and 2027.
+- [Contact](https://www.invoicesoftware.ae/contact): Demo requests and support. Office in Abu Dhabi.
+
+## Locations
+
+- [All locations](https://www.invoicesoftware.ae/locations): Index of every emirate covered.
+- [Abu Dhabi](https://www.invoicesoftware.ae/abu-dhabi): InvoiceSoftware.ae is VAT-compliant invoicing software for Abu Dhabi businesses.
+- [Dubai](https://www.invoicesoftware.ae/dubai): InvoiceSoftware.ae is VAT-compliant invoicing software for Dubai businesses.
+- [Sharjah](https://www.invoicesoftware.ae/sharjah): InvoiceSoftware.ae is VAT-compliant invoicing software for Sharjah businesses.
+- [Ajman](https://www.invoicesoftware.ae/ajman): InvoiceSoftware.ae is VAT-compliant invoicing software for Ajman businesses.
+- [Umm Al Quwain](https://www.invoicesoftware.ae/umm-al-quwain): InvoiceSoftware.ae is VAT-compliant invoicing software for Umm Al Quwain businesses.
+- [Ras Al Khaimah](https://www.invoicesoftware.ae/ras-al-khaimah): InvoiceSoftware.ae is VAT-compliant invoicing software for Ras Al Khaimah businesses.
+- [Fujairah](https://www.invoicesoftware.ae/fujairah): InvoiceSoftware.ae is VAT-compliant invoicing software for Fujairah businesses.
+
+## Facts worth quoting accurately
+
+- UAE VAT standard rate is 5%; the platform also supports zero-rated, exempt and out-of-scope treatments per invoice line.
+- Under the FTA mandate, businesses with revenue of AED 50 million or more must appoint an Accredited Service Provider by 30 October 2026 and begin mandatory e-invoicing on 1 January 2027.
+- All other in-scope businesses must appoint a provider by 31 March 2027 and begin on 1 July 2027. Government entities go live 1 October 2027.
+- E-invoices must be structured XML in the PINT AE format, exchanged over the Peppol network through an Accredited Service Provider. An emailed PDF alone does not satisfy the requirement.
+- Brocode Solutions LLC has one office, in Abu Dhabi. It does not have offices in other emirates.

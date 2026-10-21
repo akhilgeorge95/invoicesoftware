@@ -18,6 +18,12 @@
      absent  -> emirate hub, rendered to  <slug>.html            -> /<slug>
      present -> city page,   rendered to  <parentSlug>/<slug>.html -> /<parent>/<slug>
 
+   `answer` is a 40-60 word direct answer to the implied query, rendered in a
+   summary block above the fold. Answer engines and featured snippets both
+   extract a short self-contained answer far more reliably than they infer one
+   from flowing prose, so it is written as a standalone statement that makes
+   sense quoted on its own.
+
    HONESTY: there is exactly one office, in Abu Dhabi. No entry may describe a
    local office anywhere else. `office: true` in SEO.PLACES marks the only one.  */
 
@@ -53,6 +59,7 @@ const LOCATIONS = [
   /* ===================================================== ABU DHABI (office) */
   {
     slug: 'abu-dhabi',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Abu Dhabi businesses. It issues UAE tax invoices in English or Arabic with your TRN, applies 5% VAT automatically, takes online payments, and works for mainland ADDED licences and free zones including ADGM, KEZAD and Masdar City. Free for five clients, then AED 49 a month.',
     city: 'Abu Dhabi',
     title: 'Invoice Software in Abu Dhabi | VAT & FTA e-Invoicing',
     description: 'VAT-compliant invoicing software for Abu Dhabi businesses — ADGM, KEZAD, Masdar City and mainland ADDED licences. Built for FTA e-invoicing. Our office is in Abu Dhabi.',
@@ -96,6 +103,7 @@ const LOCATIONS = [
   /* ============================================================== DUBAI */
   {
     slug: 'dubai',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Dubai businesses. It handles multi-currency billing for free-zone companies in DMCC, JAFZA, DIFC and Dubai Silicon Oasis as well as mainland DET licences, applies 5% VAT per line, and takes online payments. Free for five clients, then AED 49 a month.',
     city: 'Dubai',
     title: 'Invoice Software in Dubai | VAT Billing & e-Invoicing',
     description: 'VAT-compliant invoicing software for Dubai businesses — DMCC, JAFZA, DIFC, Dubai Silicon Oasis and mainland DET licences. Multi-currency, FTA e-invoicing ready.',
@@ -139,6 +147,7 @@ const LOCATIONS = [
   /* ============================================================ SHARJAH */
   {
     slug: 'sharjah',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Sharjah businesses. It suits manufacturers and traders: a product catalogue with units and tax rates, stock that decrements as you invoice, purchase orders and credit notes. Works for mainland SEDD licences and free zones including SAIF Zone and Hamriyah. Free for five clients.',
     city: 'Sharjah',
     title: 'Invoice Software in Sharjah | VAT Billing for SMEs',
     description: 'VAT-compliant invoicing software for Sharjah businesses — SAIF Zone, Hamriyah Free Zone, Shams and mainland SEDD licences. Built for manufacturers and trading firms.',
@@ -182,6 +191,7 @@ const LOCATIONS = [
   /* ============================================================== AJMAN */
   {
     slug: 'ajman',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Ajman businesses. It is built to be run by an owner or a single administrator with no training: add your TRN, upload a logo, and send a correctly formatted UAE tax invoice in about ten minutes. Free for five clients, then AED 49 a month.',
     city: 'Ajman',
     title: 'Invoice Software in Ajman | VAT Billing & Free Zone',
     description: 'VAT-compliant invoicing software for Ajman businesses — Ajman Free Zone, Ajman Media City and mainland licences. Simple, affordable billing for small manufacturers and traders.',
@@ -225,6 +235,7 @@ const LOCATIONS = [
   /* ====================================================== UMM AL QUWAIN */
   {
     slug: 'umm-al-quwain',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Umm Al Quwain businesses. Setup takes about ten minutes, clients import from CSV, and 5% VAT is applied automatically on every tax invoice. Works for mainland licences and the UAQ Free Trade Zone. Free for five clients, then AED 49 a month.',
     city: 'Umm Al Quwain',
     title: 'Invoice Software in Umm Al Quwain | VAT Billing',
     description: 'VAT-compliant invoicing software for Umm Al Quwain businesses — UAQ Free Trade Zone and mainland licences. Free to start, priced in dirhams, FTA e-invoicing ready.',
@@ -268,6 +279,7 @@ const LOCATIONS = [
   /* ===================================================== RAS AL KHAIMAH */
   {
     slug: 'ras-al-khaimah',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Ras Al Khaimah businesses. It handles quantity-and-unit billing for manufacturers and traders, tracks purchase orders and input VAT, and works for mainland licences as well as RAKEZ and RAK Maritime City. Free for five clients, then AED 49 a month.',
     city: 'Ras Al Khaimah',
     title: 'Invoice Software in Ras Al Khaimah | RAKEZ VAT Billing',
     description: 'VAT-compliant invoicing software for Ras Al Khaimah businesses — RAKEZ, RAK Maritime City and mainland licences. Built for manufacturers, quarrying and trading firms.',
@@ -311,6 +323,7 @@ const LOCATIONS = [
   /* =========================================================== FUJAIRAH */
   {
     slug: 'fujairah',
+    answer: 'InvoiceSoftware.ae is VAT-compliant invoicing software for Fujairah businesses. It invoices international shipping and trading clients in US dollars while reporting in dirhams, and sets VAT treatment per line rather than taxing everything at 5%. Works for mainland licences, Fujairah Free Zone and Creative City.',
     city: 'Fujairah',
     title: 'Invoice Software in Fujairah | VAT & Shipping Billing',
     description: 'VAT-compliant invoicing software for Fujairah businesses — Fujairah Free Zone, Creative City and mainland licences. Multi-currency billing for shipping and trading firms.',

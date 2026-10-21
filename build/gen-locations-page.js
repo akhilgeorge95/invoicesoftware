@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const SEO = require('./seo');
+const GITDATE = require('./gitdate');
 const CHROME = require('./chrome');
 const LOCATIONS = require('./data-locations');
 
@@ -56,6 +57,12 @@ const seoHead = SEO.head({
   schemas: [
     SEO.organizationSchema(),
     SEO.breadcrumbSchema(trail),
+    SEO.webPageSchema({
+      url: 'locations',
+      title: 'Invoice Software Across the UAE | All 7 Emirates',
+      desc: 'VAT-compliant invoicing software for businesses across all seven emirates.',
+      modified: GITDATE.index().latest('build/data-locations.js', 'build/gen-locations-page.js'),
+    }),
     {
       '@type': 'CollectionPage',
       name: 'Invoice software across the UAE',
