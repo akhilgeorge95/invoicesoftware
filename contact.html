@@ -360,7 +360,18 @@
               <textarea id="message" name="message" placeholder="How do you invoice today, and what's not working about it?"></textarea>
             </div>
 
-            <button class="btn btn--primary btn--block btn--lg" type="submit" data-magnetic>Send request</button>
+            <!-- Honeypot. Hidden from people, irresistible to bots; a value
+                 here makes the server discard the submission silently. -->
+            <div class="hp" aria-hidden="true">
+              <label for="nickname">Nickname</label>
+              <input id="nickname" name="nickname" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFq5L88oa_-HeOob" data-theme="auto"></div>
+
+            <button class="btn btn--primary btn--block btn--lg" type="submit" data-magnetic>
+              <span class="btn-text">Send request</span>
+            </button>
 
             <p class="form-note" data-form-status hidden></p>
 
@@ -611,6 +622,7 @@
   </div>
 </footer>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/assets/js/main.js"></script>
 </body>
 </html>

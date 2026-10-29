@@ -169,7 +169,7 @@ These are deliberate placeholders, not oversights:
 | **~~Office address~~** | — | Done: Mezzanine Floor, Room No. 03, Building # 146, Wadi Al Kisayfah St., Al Zahiyah, Abu Dhabi — in `SITE.street`, so it propagates everywhere on rebuild. |
 | **PO Box 51710** | `build/seo.js` `SITE.poBox` | **Unconfirmed.** Carried over from the previous address and not re-supplied with the new one. Confirm it still applies, or delete the `poBox` line — it appears in the LocalBusiness schema on every page. |
 | **Support hours** | `contact.html`, next to the phone | "Sun–Thu, 9am–6pm GST", "Under 4 hours", "English & Arabic" were assumed — confirm or change. |
-| **Form handler** | `contact.html` | The form is wired to a local success simulation in `initForm()`. Point it at Netlify Forms, a Cloudflare Pages Function, Formspree or your CRM. |
+| **`APPS_SCRIPT_URL`** | Pages project env var | **The one thing blocking the contact form.** Everything else is built and deployed. Deploy `build/apps-script/Code.gs` as a Google Apps Script web app and set its `/exec` URL (and `FORWARD_SECRET`) on the Pages project — see "Contact form" below. |
 | **Pricing** | `pricing.html`, `index.html` | AED 0 / 49 / 69 / 1,099 derived from Invoice Ninja's USD tiers. Confirm against your actual commercials. |
 | **Sign-in / signup links** | nav and CTAs | Currently point at `contact.html`. Repoint at the real app once it exists. |
 | **Brocode Solutions URL** | footer bottom bar, all pages | The credit links to `https://brocodesolutions.com`, inferred from the account email domain. Correct it if the site lives elsewhere. |
@@ -291,6 +291,53 @@ step's `--i`, so they fire in step with whichever row they sit on.
 The section is deliberately labelled as an **illustrative** workflow comparison — it
 counts the steps drawn on screen rather than claiming a measured time saving. If you want
 to put real numbers on it, run a timing study first.
+
+## Contact form
+
+`POST /api/contact`, a Cloudflare Pages Function in `functions/api/contact.js`.
+Same-origin, so there is no CORS involved at all.
+
+Pipeline: honeypot → field validation → server-side Turnstile verification →
+delivery. `_routes.json` confines Function invocation to `/api/*`, so all 14
+HTML pages are still served as pure static assets with no Function in the crawl
+path.
+
+**Why not the shared `forms.brocode.ae` endpoint** that `erpsoftwares.ae` uses:
+it lives in a different Cloudflare account, so its CORS allowlist cannot be
+extended from this one (a preflight from this origin returns
+`access-control-allow-origin: https://www.erpsoftwares.ae`), and its schema
+requires ERP-specific fields — `industry`, `hasERP`, `companySize` — that do not
+fit an invoicing enquiry.
+
+### Environment (Pages project → Settings → Environment variables)
+
+| Variable | Type | Status |
+|---|---|---|
+| `TURNSTILE_SECRET` | secret | set — pairs with sitekey `0x4AAAAAAFq5L88oa_-HeOob` in `contact.html` |
+| `CONTACT_TO` | plain | set — `hello@brocodesolutions.com` |
+| `APPS_SCRIPT_URL` | plain | **not set — the form cannot deliver until it is** |
+| `FORWARD_SECRET` | secret | optional but recommended; must match `SHARED_SECRET` in the Apps Script |
+
+The Workers runtime has no SMTP, so delivery is an HTTPS hop to a Google Apps
+Script web app that sends the mail. `build/apps-script/Code.gs` is that script,
+with setup steps in its header comment.
+
+With `APPS_SCRIPT_URL` unset the endpoint returns a 500 rather than a false
+success — a contact form that silently drops enquiries is worse than one that is
+visibly broken.
+
+### Verified behaviour
+
+```
+GET  /api/contact                    -> 405  Method not allowed
+POST {}                              -> 400  Missing required field: name
+POST {name}                          -> 400  Missing required field: email
+POST {name, email:"nope"}            -> 400  Missing required field: email
+POST {name, email}                   -> 403  Verification required
+POST {..., cf_turnstile_token:"fake"} -> 403  Verification failed
+POST {..., nickname:"spam"}          -> 200  honeypot, silently discarded
+POST {name: 200 chars}               -> 400  Field too long: name
+```
 
 ## Mobile
 

@@ -1577,6 +1577,26 @@ td .yes { color: #059669; font-weight: 700; }
 :root[data-theme="dark"] td .yes { color: var(--mint); }
 td .no { color: var(--text-faint); }
 
+/* Honeypot. Off-screen rather than display:none — some bots skip fields that
+   are explicitly hidden, and this still keeps it away from people and from
+   screen readers (the wrapper carries aria-hidden). */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Turnstile sizes itself; just give it room and stop it overflowing a narrow
+   card on a phone. */
+.cf-turnstile {
+  margin: 4px 0 2px;
+  min-height: 65px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 /* Forms */
 .form { display: grid; gap: 18px; }
 .field { display: grid; gap: 7px; }

@@ -355,23 +355,86 @@
 
   /* ------------------------------------------------------- Contact form */
 
+  /* Maps a server status onto something a person can act on. A bare
+     "something went wrong" leaves them with nowhere to go, so every branch
+     either says what to fix or gives them the email address instead. */
+  function formError(status, error) {
+    if (status === 403) return "Please complete the verification above and try again.";
+    if (status === 429) return "That's a few submissions already — please wait a minute and try again.";
+    if (typeof error === "string" && error.indexOf("Missing required field") === 0) {
+      var key = (error.split(":")[1] || "").trim();
+      var labels = { name: "your name", email: "a valid email address" };
+      return "Please fill in " + (labels[key] || key) + ".";
+    }
+    return "Sorry — we couldn't send that just now. Please try again, or email hello@brocodesolutions.com.";
+  }
+
   function initForm() {
     var form = $("[data-demo-form]");
     if (!form) return;
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var btn = $("button[type=submit]", form);
+      var label = $(".btn-text", form) || btn;
       var status = $("[data-form-status]", form);
-      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
-      setTimeout(function () {
-        form.reset();
-        if (btn) { btn.disabled = false; btn.textContent = "Send request"; }
+      var original = label ? label.textContent : "Send request";
+
+      var val = function (sel) { var el = $(sel, form); return el ? el.value.trim() : ""; };
+      var payload = {
+        name: val("#name"),
+        email: val("#email"),
+        company: val("#company"),
+        phone: val("#phone"),
+        topic: val("#topic"),
+        size: val("#size"),
+        message: val("#message"),
+        nickname: val("[name=nickname]"),
+        cf_turnstile_token: val("[name=cf-turnstile-response]")
+      };
+
+      if (btn) btn.disabled = true;
+      if (label) label.textContent = "Sending…";
+      if (status) status.hidden = true;
+
+      fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          return { ok: res.ok, status: res.status, body: body };
+        });
+      }).then(function (r) {
+        if (btn) btn.disabled = false;
+        if (label) label.textContent = original;
+
+        if (r.ok) {
+          form.reset();
+          if (window.turnstile) { try { turnstile.reset(); } catch (err) {} }
+          if (status) {
+            status.hidden = false;
+            status.textContent = "Thanks — that's with us. We reply within one business day.";
+          }
+          return;
+        }
+
+        /* A used token cannot be replayed, so it must be reset before a retry
+           or the second attempt fails for a different reason than the first. */
+        if (window.turnstile) { try { turnstile.reset(); } catch (err) {} }
         if (status) {
           status.hidden = false;
-          status.textContent =
-            "Thanks — your request is queued. Connect this form to your CRM or mail handler to receive it.";
+          status.textContent = formError(r.status, r.body && r.body.error);
         }
-      }, 900);
+      }).catch(function () {
+        if (btn) btn.disabled = false;
+        if (label) label.textContent = original;
+        if (window.turnstile) { try { turnstile.reset(); } catch (err) {} }
+        if (status) {
+          status.hidden = false;
+          status.textContent = "Network error — please check your connection and try again.";
+        }
+      });
     });
   }
 
